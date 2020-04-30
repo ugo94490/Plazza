@@ -22,6 +22,7 @@ class APizza
     public:
         enum PizzaType
         {
+            PizzaError = 0,
             Regina = 1,
             Margarita = 2,
             Americana = 4,
@@ -30,6 +31,7 @@ class APizza
 
         enum PizzaSize
         {
+            SizeError = 0,
             S = 1,
             M = 2,
             L = 4,

@@ -8,7 +8,7 @@
 #include "Core.hpp"
 #include "Americana.hpp"
 
-Americana::Americana(APizza::PizzaType pizza, APizza::PizzaSize taille)
+American::American(APizza::PizzaType pizza, APizza::PizzaSize taille)
 {
     type = pizza;
     size = taille;
@@ -19,6 +19,6 @@ Americana::Americana(APizza::PizzaType pizza, APizza::PizzaSize taille)
     ingredient.push_back(APizza::PizzaIngredient::Steak);
 }
 
-Americana::~Americana()
+American::~American()
 {
 }

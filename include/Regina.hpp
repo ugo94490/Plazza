@@ -9,9 +9,9 @@
 
 #include "APizza.hpp"
 
-class Regina : public APizza
+class Regin : public APizza
 {
     public:
-        Regina(APizza::PizzaType, APizza::PizzaSize);
-        virtual ~Regina();
+        Regin(APizza::PizzaType, APizza::PizzaSize);
+        virtual ~Regin();
 };

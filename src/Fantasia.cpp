@@ -8,7 +8,7 @@
 #include "Core.hpp"
 #include "Fantasia.hpp"
 
-Fantasia::Fantasia(APizza::PizzaType pizza, APizza::PizzaSize taille)
+Fantasi::Fantasi(APizza::PizzaType pizza, APizza::PizzaSize taille)
 {
     type = pizza;
     size = taille;
@@ -20,6 +20,6 @@ Fantasia::Fantasia(APizza::PizzaType pizza, APizza::PizzaSize taille)
     ingredient.push_back(APizza::PizzaIngredient::Chief_Love);
 }
 
-Fantasia::~Fantasia()
+Fantasi::~Fantasi()
 {
 }

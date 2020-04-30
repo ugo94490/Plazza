@@ -8,7 +8,7 @@
 #include "Core.hpp"
 #include "Margarita.hpp"
 
-Margarita::Margarita(APizza::PizzaType pizza, APizza::PizzaSize taille)
+Margarit::Margarit(APizza::PizzaType pizza, APizza::PizzaSize taille)
 {
     type = pizza;
     size = taille;
@@ -18,6 +18,6 @@ Margarita::Margarita(APizza::PizzaType pizza, APizza::PizzaSize taille)
     ingredient.push_back(APizza::PizzaIngredient::Gruyere);
 }
 
-Margarita::~Margarita()
+Margarit::~Margarit()
 {
 }

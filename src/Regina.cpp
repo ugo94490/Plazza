@@ -8,7 +8,7 @@
 #include "Core.hpp"
 #include "Regina.hpp"
 
-Regina::Regina(APizza::PizzaType pizza, APizza::PizzaSize taille)
+Regin::Regin(APizza::PizzaType pizza, APizza::PizzaSize taille)
 {
     type = pizza;
     size = taille;
@@ -20,6 +20,6 @@ Regina::Regina(APizza::PizzaType pizza, APizza::PizzaSize taille)
     ingredient.push_back(APizza::PizzaIngredient::Mushrooms);
 }
 
-Regina::~Regina()
+Regin::~Regin()
 {
 }

@@ -10,9 +10,9 @@
 #include <memory>
 #include "APizza.hpp"
 
-class Americana : public APizza
+class American : public APizza
 {
     public:
-        Americana(APizza::PizzaType, APizza::PizzaSize);
-        virtual ~Americana();
+        American(APizza::PizzaType, APizza::PizzaSize);
+        virtual ~American();
 };

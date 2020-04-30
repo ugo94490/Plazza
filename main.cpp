@@ -87,20 +87,20 @@ std::vector<std::string> Core::divide_command(std::string str)
     return (parse);
 }
 
-int Core::getType(std::string str)
+APizza::PizzaType Core::getType(std::string str)
 {
     for (auto i = enum_pizza.begin(); i != enum_pizza.end(); i++)
         if (strcasecmp(i->first.c_str(), str.c_str()) == 0)
             return (i->second);
-    return (-1);
+    return (APizza::PizzaType::PizzaError);
 }
 
-int Core::getSize(std::string str)
+APizza::PizzaSize Core::getSize(std::string str)
 {
     for (auto i = enum_size.begin(); i != enum_size.end(); i++)
         if (i->first.compare(str) == 0)
             return (i->second);
-    return (-1);
+    return (APizza::PizzaSize::SizeError);
 }
 
 int Core::getNb(std::string str)
@@ -132,13 +132,13 @@ std::shared_ptr<APizza> Core::fill_pizza(std::vector<std::string> tab)
     std::shared_ptr<APizza> ptr = nullptr;
 
     if (getType(tab[0]) == APizza::PizzaType::Americana)
-        ptr = new Americana(getType(tab[0]), getSize(tab[1]));
+        ptr = new American(getType(tab[0]), getSize(tab[1]));
     if (getType(tab[0]) == APizza::PizzaType::Fantasia)
-        ptr = new Fantasia(getType(tab[0]), getSize(tab[1]));
+        ptr = new Fantasi(getType(tab[0]), getSize(tab[1]));
     if (getType(tab[0]) == APizza::PizzaType::Regina)
-        ptr = new Regina(getType(tab[0]), getSize(tab[1]));
+        ptr = new Regin(getType(tab[0]), getSize(tab[1]));
     if (getType(tab[0]) == APizza::PizzaType::Margarita)
-        ptr = new Margarita(getType(tab[0]), getSize(tab[1]));
+        ptr = new Margarit(getType(tab[0]), getSize(tab[1]));
     if (ptr == nullptr)
         throw(Exception ("Bad type of pizza"));
 
