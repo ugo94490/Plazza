@@ -49,7 +49,7 @@ class APizza
             Goat_Cheese = 7,
             Chief_Love = 8
         };
-
+        APizza() = default;
         APizza(APizza::PizzaType, APizza::PizzaSize);
         virtual ~APizza() = 0;
         APizza::PizzaType getType(void);

@@ -8,6 +8,9 @@
 SRC	=	main.cpp		\
 		src/Americana.cpp	\
 		src/APizza.cpp		\
+		src/Fantasia.cpp	\
+		src/Regina.cpp		\
+		src/Margarita.cpp	\
 
 OBJ	=	$(SRC:.cpp=.o)
 
@@ -18,7 +21,7 @@ CPPFLAGS	=	-I./include
 all:	$(NAME)
 
 $(NAME):	$(OBJ)
-	g++ -o $(NAME) $(OBJ) $(CPPFLAGS)
+	g++ -o $(NAME) $(OBJ) $(CPPFLAGS) -Wall -Wextra
 
 clean:
 	rm -f $(OBJ)

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <memory>
 #include "APizza.hpp"
 
 class Americana : public APizza

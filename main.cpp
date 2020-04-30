@@ -16,6 +16,9 @@
 #include "APizza.hpp"
 #include "Exception.hpp"
 #include "Americana.hpp"
+#include "Regina.hpp"
+#include "Margarita.hpp"
+#include "Fantasia.hpp"
 
 static const std::map<std::string, APizza::PizzaType> enum_pizza {
     {"regina", APizza::PizzaType::Regina},
