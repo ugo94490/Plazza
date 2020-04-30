@@ -42,6 +42,7 @@ class Core {
         int getNb(std::string str);
         void check_pizza(pizza_t pizza);
         pizza_t fill_pizza(std::vector<std::string> tab);
+        void status();
     private:
         float multiplier;
         int nb_cook;

@@ -11,6 +11,7 @@
 #include <string.h>
 #include <vector>
 #include <map>
+#include <time.h>
 #include "Core.hpp"
 #include "Pizza.hpp"
 #include "Exception.hpp"
@@ -141,11 +142,8 @@ pizza_t Core::get_pizza(std::string str)
     std::string tmp;
     std::vector<std::string> parse;
 
-    while (std::getline(stream, tmp, ' ')) {
-        if (tmp[tmp.size() - 1] == '\n')
-            tmp = tmp.substr(0, tmp.size() - 1);
+    while (std::getline(stream, tmp, ' '))
         parse.push_back(tmp);
-    }
     if (parse.size() != 3)
         throw(Exception ("Command Invalid (Invalid Pizza)"));
     pizza = fill_pizza(parse);
@@ -181,15 +179,30 @@ void Core::parse_pizza(std::string str)
     }
 }
 
+void Core::status()
+{
+
+}
+
 void Core::restaurant()
 {
     std::string str;
+    static clock_t timer = 0;
 
     while (1) {
         getline(std::cin, str);
         if (std::cin.eof() == 1)
             return;
-        parse_pizza(str);
+        if (str[str.size() - 1] == '\n')
+            str = str.substr(0, str.size() - 1);
+        if ((clock() - timer) > (replace * 1000)) {
+            timer = clock();
+            //refill_kitchen();
+        }
+        if (str.compare("status") == 0)
+            status();
+        else
+            parse_pizza(str);
     }
 }
 
