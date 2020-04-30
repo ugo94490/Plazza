@@ -13,22 +13,23 @@
 #include <map>
 #include <time.h>
 #include "Core.hpp"
-#include "Pizza.hpp"
+#include "APizza.hpp"
 #include "Exception.hpp"
+#include "Americana.hpp"
 
-static const std::map<std::string, Core::PizzaType> enum_pizza {
-    {"regina", Core::PizzaType::Regina},
-    {"margarita", Core::PizzaType::Margarita},
-    {"americana", Core::PizzaType::Americana},
-    {"fantasia", Core::PizzaType::Fantasia}
+static const std::map<std::string, APizza::PizzaType> enum_pizza {
+    {"regina", APizza::PizzaType::Regina},
+    {"margarita", APizza::PizzaType::Margarita},
+    {"americana", APizza::PizzaType::Americana},
+    {"fantasia", APizza::PizzaType::Fantasia}
 };
 
-static const std::map<std::string, Core::PizzaSize> enum_size {
-    {"S", Core::PizzaSize::S},
-    {"M", Core::PizzaSize::M},
-    {"L", Core::PizzaSize::L},
-    {"XL", Core::PizzaSize::XL},
-    {"XXL", Core::PizzaSize::XXL}
+static const std::map<std::string, APizza::PizzaSize> enum_size {
+    {"S", APizza::PizzaSize::S},
+    {"M", APizza::PizzaSize::M},
+    {"L", APizza::PizzaSize::L},
+    {"XL", APizza::PizzaSize::XL},
+    {"XXL", APizza::PizzaSize::XXL}
 };
 
 bool isInt(std::string str)
@@ -115,30 +116,37 @@ int Core::getNb(std::string str)
     return (number);
 }
 
-void Core::check_pizza(pizza_t pizza)
+void Core::check_pizza(std::shared_ptr<APizza> ptr)
 {
-    if (pizza.type == -1)
-        throw(Exception ("Bad type of pizza"));
-    if (pizza.size == -1)
+    if (ptr->getSize() == -1)
         throw(Exception ("Bad size of pizza"));
-    if (pizza.nb == -1)
-        throw(Exception ("Bad number of pizza"));
+    /*if (pizza.nb == -1)
+        throw(Exception ("Bad number of pizza"));*/
 }
 
-pizza_t Core::fill_pizza(std::vector<std::string> tab)
+std::shared_ptr<APizza> Core::fill_pizza(std::vector<std::string> tab)
 {
-    pizza_t pizza;
+    std::shared_ptr<APizza> ptr = nullptr;
 
-    pizza.type = getType(tab[0]);
-    pizza.size = getSize(tab[1]);
-    pizza.nb = getNb(tab[2]);
-    return (pizza);
+    if (getType(tab[0]) == APizza::PizzaType::Americana)
+        ptr = new Americana(getType(tab[0]), getSize(tab[1]));
+    if (getType(tab[0]) == APizza::PizzaType::Fantasia)
+        ptr = new Fantasia(getType(tab[0]), getSize(tab[1]));
+    if (getType(tab[0]) == APizza::PizzaType::Regina)
+        ptr = new Regina(getType(tab[0]), getSize(tab[1]));
+    if (getType(tab[0]) == APizza::PizzaType::Margarita)
+        ptr = new Margarita(getType(tab[0]), getSize(tab[1]));
+    if (ptr == nullptr)
+        throw(Exception ("Bad type of pizza"));
+
+    /*ptr.nb = getNb(tab[2]);*/
+    return (ptr);
 }
 
-pizza_t Core::get_pizza(std::string str)
+std::shared_ptr<APizza> Core::get_pizza(std::string str)
 {
     std::stringstream stream(str);
-    pizza_t pizza;
+    std::shared_ptr<APizza> ptr;
     std::string tmp;
     std::vector<std::string> parse;
 
@@ -146,36 +154,32 @@ pizza_t Core::get_pizza(std::string str)
         parse.push_back(tmp);
     if (parse.size() != 3)
         throw(Exception ("Command Invalid (Invalid Pizza)"));
-    pizza = fill_pizza(parse);
-    check_pizza(pizza);
-    return (pizza);
+    ptr = fill_pizza(parse);
+    check_pizza(ptr);
+    return (ptr);
 }
 
-std::vector<pizza_t> Core::create_command(std::vector<std::string> tab_command)
+std::vector<std::shared_ptr<APizza>> Core::create_command(std::vector<std::string> tab_command)
 {
-    pizza_t pizza;
-    std::vector<pizza_t> tab;
+    std::vector<std::shared_ptr<APizza>> tab;
 
     if (tab_command.size() == 0)
         throw(Exception ("Command Invalid (No Argument)"));
-    for (size_t i = 0; i < tab_command.size(); i++) {
-        pizza = get_pizza(tab_command[i]);
-        tab.push_back(pizza);
-    }
+    for (size_t i = 0; i < tab_command.size(); i++)
+        tab.push_back(get_pizza(tab_command[i]));
     return (tab);
 }
 
 void Core::parse_pizza(std::string str)
 {
-    std::vector<pizza_t> tab_pizza;
+    std::vector<std::shared_ptr<APizza>> tab_pizza;
     std::vector<std::string> tab_command;
 
     tab_command = divide_command(str);
     tab_pizza = create_command(tab_command);
     for (size_t i = 0; i < tab_pizza.size(); i++) {
-        std::cout << "Pizza :" << tab_pizza[i].type;
-        std::cout << "  Size :" << tab_pizza[i].size;
-        std::cout << "  Number :" << tab_pizza[i].nb << std::endl;
+        std::cout << "Pizza :" << tab_pizza[i]->getType();
+        std::cout << "  Size :" << tab_pizza[i]->getSize() << std::endl;
     }
 }
 

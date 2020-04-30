@@ -57,7 +57,7 @@ class APizza
         std::string pack(APizza &);
         APizza &unpack(std::string);
 
-    private:
+    protected:
         APizza::PizzaType type;
         APizza::PizzaSize size;
         std::vector<APizza::PizzaIngredient> ingredient;

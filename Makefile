@@ -5,7 +5,9 @@
 ## Makefile
 ##
 
-SRC	=	main.cpp
+SRC	=	main.cpp		\
+		src/Americana.cpp	\
+		src/APizza.cpp		\
 
 OBJ	=	$(SRC:.cpp=.o)
 
