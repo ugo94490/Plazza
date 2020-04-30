@@ -19,7 +19,7 @@ class Core {
         int count_part(std::string str);
         std::vector<std::string> divide_command(std::string);
         std::vector<std::shared_ptr<APizza>> create_command(std::vector<std::string> tab_command);
-        std::shared_ptr<APizza> get_pizza(std::string str);
+        std::vector<std::shared_ptr<APizza>> get_pizza(std::string str, std::vector<std::shared_ptr<APizza>> tab);
         APizza::PizzaType getType(std::string str);
         APizza::PizzaSize getSize(std::string str);
         int getNb(std::string str);

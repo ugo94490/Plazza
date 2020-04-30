@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 typedef struct pizza_s
 {
@@ -57,7 +58,7 @@ class APizza
         APizza::PizzaType getType(void);
         APizza::PizzaSize getSize(void);
         std::string pack(APizza &);
-        APizza &unpack(std::string);
+        std::shared_ptr<APizza> unpack(std::string);
 
     protected:
         APizza::PizzaType type;

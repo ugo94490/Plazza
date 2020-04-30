@@ -13,6 +13,10 @@ APizza::APizza(APizza::PizzaType pizza, APizza::PizzaSize taille)
     size = taille;
 }
 
+APizza::~APizza()
+{
+}
+
 APizza::PizzaType APizza::getType(void)
 {
     return (type);
@@ -33,9 +37,10 @@ std::string APizza::pack(APizza &pizza)
         return ("Margarita");
     if (pizza.type == APizza::PizzaType::Regina)
         return ("Regina");
+    return (NULL);
 }
 
-APizza &APizza::unpack(std::string str)
+std::shared_ptr<APizza> APizza::unpack(std::string str)
 {
-    
+    return (nullptr);
 }

@@ -123,30 +123,31 @@ void Core::check_pizza(std::shared_ptr<APizza> ptr)
 {
     if (ptr->getSize() == -1)
         throw(Exception ("Bad size of pizza"));
-    /*if (pizza.nb == -1)
-        throw(Exception ("Bad number of pizza"));*/
 }
 
 std::shared_ptr<APizza> Core::fill_pizza(std::vector<std::string> tab)
 {
-    std::shared_ptr<APizza> ptr = nullptr;
-
-    if (getType(tab[0]) == APizza::PizzaType::Americana)
-        ptr = new American(getType(tab[0]), getSize(tab[1]));
-    if (getType(tab[0]) == APizza::PizzaType::Fantasia)
-        ptr = new Fantasi(getType(tab[0]), getSize(tab[1]));
-    if (getType(tab[0]) == APizza::PizzaType::Regina)
-        ptr = new Regin(getType(tab[0]), getSize(tab[1]));
-    if (getType(tab[0]) == APizza::PizzaType::Margarita)
-        ptr = new Margarit(getType(tab[0]), getSize(tab[1]));
-    if (ptr == nullptr)
-        throw(Exception ("Bad type of pizza"));
-
-    /*ptr.nb = getNb(tab[2]);*/
-    return (ptr);
+    if (getType(tab[0]) == APizza::PizzaType::Americana) {
+        std::shared_ptr<APizza> ptr (new American(getType(tab[0]), getSize(tab[1])));
+        return (ptr);
+    }
+    if (getType(tab[0]) == APizza::PizzaType::Fantasia) {
+        std::shared_ptr<APizza> ptr (new Fantasi(getType(tab[0]), getSize(tab[1])));
+        return (ptr);
+    }
+    if (getType(tab[0]) == APizza::PizzaType::Regina) {
+        std::shared_ptr<APizza> ptr (new Regin(getType(tab[0]), getSize(tab[1])));
+        return (ptr);
+    }
+    if (getType(tab[0]) == APizza::PizzaType::Margarita) {
+        std::shared_ptr<APizza> ptr (new Margarit(getType(tab[0]), getSize(tab[1])));
+        return (ptr);
+    }
+    throw(Exception ("Bad type of pizza"));
+    return (nullptr);
 }
 
-std::shared_ptr<APizza> Core::get_pizza(std::string str)
+std::vector<std::shared_ptr<APizza>> Core::get_pizza(std::string str, std::vector<std::shared_ptr<APizza>> tab)
 {
     std::stringstream stream(str);
     std::shared_ptr<APizza> ptr;
@@ -157,9 +158,14 @@ std::shared_ptr<APizza> Core::get_pizza(std::string str)
         parse.push_back(tmp);
     if (parse.size() != 3)
         throw(Exception ("Command Invalid (Invalid Pizza)"));
-    ptr = fill_pizza(parse);
-    check_pizza(ptr);
-    return (ptr);
+    if (getNb(parse[2]) == -1)
+        throw(Exception ("Bad number of pizza"));
+    for (int i = 0; i < getNb(parse[2]); i++) {
+        ptr = fill_pizza(parse);
+        check_pizza(ptr);
+        tab.push_back(ptr);
+    }
+    return (tab);
 }
 
 std::vector<std::shared_ptr<APizza>> Core::create_command(std::vector<std::string> tab_command)
@@ -169,7 +175,7 @@ std::vector<std::shared_ptr<APizza>> Core::create_command(std::vector<std::strin
     if (tab_command.size() == 0)
         throw(Exception ("Command Invalid (No Argument)"));
     for (size_t i = 0; i < tab_command.size(); i++)
-        tab.push_back(get_pizza(tab_command[i]));
+        tab = get_pizza(tab_command[i], tab);
     return (tab);
 }
 
