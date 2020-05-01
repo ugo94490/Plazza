@@ -34,15 +34,26 @@ int APizza::getTime(void)
 
 std::string APizza::pack(APizza &pizza)
 {
+    std::string str = "Pizza ";
     if (pizza.type == APizza::PizzaType::Americana)
-        return ("Americana");
+        str + "Americana";
     if (pizza.type == APizza::PizzaType::Fantasia)
-        return ("Fantasia");
+        str + "Fantasia";
     if (pizza.type == APizza::PizzaType::Margarita)
-        return ("Margarita");
+        str + "Margarita";
     if (pizza.type == APizza::PizzaType::Regina)
-        return ("Regina");
-    return (NULL);
+        str + "Regina";
+    if (pizza.size == APizza::PizzaSize::S)
+        str + " S";
+    if (pizza.size == APizza::PizzaSize::M)
+        str + " M";
+    if (pizza.size == APizza::PizzaSize::L)
+        str + " L";
+    if (pizza.size == APizza::PizzaSize::XL)
+        str + " XL";
+    if (pizza.size == APizza::PizzaSize::XXL)
+        str + " XXL";
+    return (str);
 }
 
 std::shared_ptr<APizza> APizza::unpack(std::string str)
