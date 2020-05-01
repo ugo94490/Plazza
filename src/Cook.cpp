@@ -27,7 +27,7 @@ Cook::Cook(std::shared_ptr<APizza> pizza, int multiplier) {
 
 void Cook::start_thread(std::shared_ptr<APizza> pizza, int multiplier) {
     this->status = 1;
-    arg_t *arg;
+    arg_t *arg = new arg_t();
     arg->pizza = pizza;
     arg->multiplier = multiplier;
     this->_thread = std::thread(sleep_cooker, arg);

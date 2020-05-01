@@ -5,6 +5,7 @@
 ** APizza.cpp
 */
 
+#include <iostream>
 #include "Core.hpp"
 
 APizza::APizza(APizza::PizzaType pizza, APizza::PizzaSize taille)
@@ -36,23 +37,23 @@ std::string APizza::pack(std::shared_ptr<APizza> pizza)
 {
     std::string str = "Pizza ";
     if (pizza->type == APizza::PizzaType::Americana)
-        str + "Americana";
+        str = str + "Americana";
     if (pizza->type == APizza::PizzaType::Fantasia)
-        str + "Fantasia";
+        str = str + "Fantasia";
     if (pizza->type == APizza::PizzaType::Margarita)
-        str + "Margarita";
+        str = str + "Margarita";
     if (pizza->type == APizza::PizzaType::Regina)
-        str + "Regina";
+        str = str + "Regina";
     if (pizza->size == APizza::PizzaSize::S)
-        str + " S";
+        str = str + " S";
     if (pizza->size == APizza::PizzaSize::M)
-        str + " M";
+        str = str + " M";
     if (pizza->size == APizza::PizzaSize::L)
-        str + " L";
+        str = str + " L";
     if (pizza->size == APizza::PizzaSize::XL)
-        str + " XL";
+        str = str + " XL";
     if (pizza->size == APizza::PizzaSize::XXL)
-        str + " XXL";
+        str = str + " XXL";
     return (str);
 }
 

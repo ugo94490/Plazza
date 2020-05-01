@@ -17,6 +17,7 @@ Kitchen::Kitchen(int multi, int nb, int temps)
     for (int i = 0; i < 4; i++) {
         std::shared_ptr<APizza> ptr (new Margarit(APizza::Margarita, APizza::S));
         pizza.push_back(ptr);
+        //std::cout << APizza::pack(ptr) << std::endl;
     }
     loop();
 }
