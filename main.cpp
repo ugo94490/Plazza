@@ -195,6 +195,7 @@ void Core::parse_pizza(std::string str)
         std::cout << "  Size :" << tab_pizza[i]->getSize() << std::endl;
     }
     Kitchen kitchen(multiplier, nb_cook, replace);
+    kitchen.clean_cook();
 }
 
 void Core::status()
