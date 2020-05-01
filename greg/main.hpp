@@ -64,5 +64,4 @@ void Threads::wait_thread() {
   this->status = 0;
 }
 
-
 #endif /* !MAIN_HPP_ */

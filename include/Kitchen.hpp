@@ -11,16 +11,18 @@
 #include <map>
 #include "APizza.hpp"
 #include "Cook.hpp"
+#include <unistd.h>
 
-class Kitchen
-{
+class Kitchen {
     public:
         Kitchen(int multiplier, int nb_cook, int time);
         ~Kitchen();
         void refill_kitchen();
         void loop();
         int getStatus();
-        std::vector<std::shared_ptr<Cook>> create_cook(int nb_cook);
+        int create_cook(APizza &pizza, int multiplier);
+        void clean_cook();
+
     private:
         int nb_cook;
         int refill;

@@ -8,10 +8,21 @@
 #pragma once
 
 #include "APizza.hpp"
+#include <thread>
+#include <iostream>
 
-class Cook
-{
+class Cook {
+    private:
+
+    int status = -1;
+    std::thread _thread;
+    
+    
     public:
         Cook(APizza &pizza, int multiplier);
-        ~Cook();
+        ~Cook() = default;
+        //void sleep_cooker(APizza &pizza, int multiplier);
+        int get_status() const;
+        void wait_thread();
+        void start_thread(APizza &pizza, int multiplier);
 };
