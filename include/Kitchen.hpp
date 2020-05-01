@@ -25,6 +25,7 @@ class Kitchen {
 
     private:
         int nb_cook;
+        int actual_cook;
         int refill;
         std::vector<std::shared_ptr<Cook>> cook;
         std::vector<std::shared_ptr<APizza>> pizza;

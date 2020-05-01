@@ -13,6 +13,7 @@ Kitchen::Kitchen(int multi, int nb, int temps)
     multiplier = multi;
     nb_cook = nb;
     refill = temps;
+    actual_cook = 0;
     for (int i = 0; i < 4; i++) {
         std::shared_ptr<APizza> ptr (new Margarit(APizza::Margarita, APizza::S));
         pizza.push_back(ptr);
@@ -55,15 +56,16 @@ int Kitchen::getStatus()
 int Kitchen::create_cook(std::shared_ptr<APizza> pizza, int multiplier) {
     int status = -1;
     
-    if (this->nb_cook != 3) {
+    if (this->actual_cook != 3) {
         std::shared_ptr<Cook> ptr(new Cook(pizza, multiplier));
         this->cook.push_back(ptr);
-        this->nb_cook += 1;
+        this->actual_cook += 1;
         std::cout << "thread crée et lancé avec succés" << std::endl;
         return 0;
     } else {
         for (size_t i = 0; i < 3; i++) {
             printf("%d\n", i);
+            printf("%d\n", this->nb_cook);
             status = this->cook[i]->get_status();
             if (status == 2) {
                 this->cook[i]->wait_thread();
@@ -85,7 +87,7 @@ void Kitchen::clean_cook() {
         if (status == 2) {
             it->get()->wait_thread();
             this->cook.erase(it--);
-            this->nb_cook -= 1;
+            this->actual_cook -= 1;
             std::cout << "thread suprimer" << std::endl;
         }
     }
