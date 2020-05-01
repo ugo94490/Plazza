@@ -10,7 +10,6 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include <map>
 
 class APizza
 {
@@ -58,6 +57,6 @@ class APizza
     protected:
         APizza::PizzaType type;
         APizza::PizzaSize size;
-        std::map<APizza::PizzaIngredient, int> ingredient;
+        std::vector<APizza::PizzaIngredient> ingredient;
         int time;
 };
