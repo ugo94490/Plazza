@@ -19,10 +19,10 @@ class Cook {
     
     
     public:
-        Cook(APizza &pizza, int multiplier);
+        Cook(std::shared_ptr<APizza> pizza, int multiplier);
         ~Cook() = default;
         //void sleep_cooker(APizza &pizza, int multiplier);
         int get_status() const;
         void wait_thread();
-        void start_thread(APizza &pizza, int multiplier);
+        void start_thread(std::shared_ptr<APizza> pizza, int multiplier);
 };

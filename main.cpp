@@ -19,6 +19,7 @@
 #include "Regina.hpp"
 #include "Margarita.hpp"
 #include "Fantasia.hpp"
+#include "Kitchen.hpp"
 
 static const std::map<std::string, APizza::PizzaType> enum_pizza {
     {"regina", APizza::PizzaType::Regina},
@@ -193,6 +194,7 @@ void Core::parse_pizza(std::string str)
         std::cout << "Pizza :" << tab_pizza[i]->getType();
         std::cout << "  Size :" << tab_pizza[i]->getSize() << std::endl;
     }
+    Kitchen kitchen(multiplier, nb_cook, replace);
 }
 
 void Core::status()

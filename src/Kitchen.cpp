@@ -6,12 +6,17 @@
 */
 
 #include "Kitchen.hpp"
+#include "Margarita.hpp"
 
 Kitchen::Kitchen(int multi, int nb, int temps)
 {
     multiplier = multi;
     nb_cook = nb;
     refill = temps;
+    for (int i = 0; i < 4; i++) {
+        std::shared_ptr<APizza> ptr (new Margarit(APizza::Margarita, APizza::S));
+        pizza.push_back(ptr);
+    }
     loop();
 }
 
@@ -47,7 +52,7 @@ int Kitchen::getStatus()
     return value;
 }
 
-int Kitchen::create_cook(APizza &pizza, int multiplier) {
+int Kitchen::create_cook(std::shared_ptr<APizza> pizza, int multiplier) {
     int status = -1;
     
     if (this->nb_cook != 3) {
@@ -58,6 +63,7 @@ int Kitchen::create_cook(APizza &pizza, int multiplier) {
         return 0;
     } else {
         for (size_t i = 0; i < 3; i++) {
+            printf("%d\n", i);
             status = this->cook[i]->get_status();
             if (status == 2) {
                 this->cook[i]->wait_thread();

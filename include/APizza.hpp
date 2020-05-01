@@ -51,7 +51,7 @@ class APizza
         APizza::PizzaType getType(void);
         APizza::PizzaSize getSize(void);
         int getTime(void);
-        static std::string pack(APizza &);
+        static std::string pack(std::shared_ptr<APizza>);
         static std::shared_ptr<APizza> unpack(std::string);
 
     protected:

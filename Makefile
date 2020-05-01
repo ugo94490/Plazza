@@ -18,12 +18,12 @@ OBJ	=	$(SRC:.cpp=.o)
 
 NAME	=	plazza
 
-CPPFLAGS	=	-I./include
+CPPFLAGS	=	-I./include -g3
 
 all:	$(NAME)
 
 $(NAME):	$(OBJ)
-	g++ -o $(NAME) $(OBJ) $(CPPFLAGS) -Wall -Wextra
+	g++ -o $(NAME) $(OBJ) $(CPPFLAGS) -Wall -Wextra -pthread -g3
 
 clean:
 	rm -f $(OBJ)
