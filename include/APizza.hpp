@@ -11,13 +11,6 @@
 #include <string>
 #include <memory>
 
-typedef struct pizza_s
-{
-    int type;
-    int size;
-    int nb;
-} pizza_t;
-
 class APizza
 {
     public:
@@ -57,6 +50,7 @@ class APizza
         virtual ~APizza() = 0;
         APizza::PizzaType getType(void);
         APizza::PizzaSize getSize(void);
+        int getTime(void);
         std::string pack(APizza &);
         std::shared_ptr<APizza> unpack(std::string);
 

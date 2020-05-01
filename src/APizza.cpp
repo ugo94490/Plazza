@@ -27,6 +27,11 @@ APizza::PizzaSize APizza::getSize(void)
     return (size);
 }
 
+int APizza::getTime(void)
+{
+    return (time);
+}
+
 std::string APizza::pack(APizza &pizza)
 {
     if (pizza.type == APizza::PizzaType::Americana)

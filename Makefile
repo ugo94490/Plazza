@@ -11,6 +11,8 @@ SRC	=	main.cpp		\
 		src/Fantasia.cpp	\
 		src/Regina.cpp		\
 		src/Margarita.cpp	\
+		src/Kitchen.cpp		\
+		src/Cook.cpp		\
 
 OBJ	=	$(SRC:.cpp=.o)
 

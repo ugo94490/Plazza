@@ -10,7 +10,7 @@
 #include <vector>
 #include <map>
 #include "APizza.hpp"
-#include <Cook.hpp>
+#include "Cook.hpp"
 
 class Kitchen
 {
@@ -20,11 +20,13 @@ class Kitchen
         void refill_kitchen();
         void loop();
         int getStatus();
+        std::vector<std::shared_ptr<Cook>> create_cook(int nb_cook);
     private:
-        int multiplier;
         int nb_cook;
-        int time;
-        std::vector<Cook> cook;
+        int refill;
+        std::vector<std::shared_ptr<Cook>> cook;
         std::vector<APizza> pizza;
+    protected:
+        int multiplier;
         std::map<APizza::PizzaIngredient, int> ingredient;
 };

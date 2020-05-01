@@ -65,6 +65,9 @@ Core::Core(char **av)
     multiplier = std::stof(av[1]);
     nb_cook = std::stoi(av[2]);
     replace = std::stoi(av[3]);
+    if (multiplier <= 0 || nb_cook < 1 || replace < 0)
+        throw(Exception ("Bad argument"));
+    nb_kitchen = 0;
     restaurant();
 }
 

@@ -12,10 +12,6 @@
 class Cook
 {
     public:
-        Cook(int multiplier);
+        Cook(APizza &pizza, int multiplier);
         ~Cook();
-
-        bool cooking(APizza &);
-    private:
-        int multiplier;
 };
