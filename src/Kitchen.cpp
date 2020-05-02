@@ -31,11 +31,21 @@ void Kitchen::refill_kitchen()
 
 }
 
-void Kitchen::loop() {
-    sleep(1);
-    for (auto it = pizza.begin(); it != pizza.end(); it++) {
-        if (this->create_cook(*it, multiplier) == 1)
-            this->pizza.erase(it--);
+void Kitchen::loop()
+{
+    static clock_t timer = 0;
+
+    while ((clock() - timer) < 5000000) {
+        if (pizza.empty() != true) {
+            for (size_t i = pizza.size() - 1; i >= 0; i--) {
+                if (this->create_cook(pizza[i], multiplier) == 0) {
+                    pizza.pop_back();
+                    timer = clock();
+                    break;
+                }
+            }
+            //std::cout << "SIZE :" << pizza.size() << std::endl;
+        }
     }
 }
 
@@ -61,7 +71,7 @@ int Kitchen::create_cook(std::shared_ptr<APizza> pizza, int multiplier) {
         std::shared_ptr<Cook> ptr(new Cook(pizza, multiplier));
         this->cook.push_back(ptr);
         this->actual_cook += 1;
-        std::cout << "thread crée et lancé avec succés" << std::endl;
+        //std::cout << "thread crée et lancé avec succés" << std::endl;
         return 0;
     } else {
         for (size_t i = 0; i < 3; i++) {
@@ -71,12 +81,12 @@ int Kitchen::create_cook(std::shared_ptr<APizza> pizza, int multiplier) {
             if (status == 2) {
                 this->cook[i]->wait_thread();
                 this->cook[i]->start_thread(pizza,multiplier);
-                std::cout << "thread lancer avec la fonction" << std::endl;
+                //std::cout << "thread lancer avec la fonction" << std::endl;
                 return 0;
             }
         }
     }
-    std::cout << "stock max atin et pas de thread dispo" << std::endl;
+    //std::cout << "stock max atin et pas de thread dispo" << std::endl;
     return 84;
 }
 
@@ -89,7 +99,7 @@ void Kitchen::clean_cook() {
             it->get()->wait_thread();
             this->cook.erase(it--);
             this->actual_cook -= 1;
-            std::cout << "thread suprimer" << std::endl;
+            //std::cout << "thread suprimer" << std::endl;
         }
     }
 }

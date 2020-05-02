@@ -196,6 +196,7 @@ void Core::parse_pizza(std::string str)
     }
     Kitchen kitchen(multiplier, nb_cook, replace);
     kitchen.clean_cook();
+    std::cout << "Kitchen Finish" << std::endl;
 }
 
 void Core::status()
