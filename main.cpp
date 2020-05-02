@@ -68,7 +68,6 @@ Core::Core(char **av)
     replace = std::stoi(av[3]);
     if (multiplier <= 0 || nb_cook < 1 || replace < 0)
         throw(Exception ("Bad argument"));
-    nb_kitchen = 0;
     restaurant();
 }
 
@@ -187,13 +186,31 @@ void Core::parse_pizza(std::string str)
 {
     std::vector<std::shared_ptr<APizza>> tab_pizza;
     std::vector<std::string> tab_command;
+    int nb = 0;
+    int tmp = 0;
 
     tab_command = divide_command(str);
     tab_pizza = create_command(tab_command);
     for (size_t i = 0; i < tab_pizza.size(); i++) {
         std::cout << "Pizza :" << tab_pizza[i]->getType();
         std::cout << "  Size :" << tab_pizza[i]->getSize() << std::endl;
-    }
+    }/*
+    if (fd_kitchen.empty() == true) {
+        //create new kitchen
+        nb = (tab_pizza.size() / (nb_cook * 2));
+        nb += (tab_pizza.size() / (nb_cook * 2)) % 6 != 0 ? 1 : 0;
+        for (int i = 0; i < nb; i++) {
+            //fd = mkfifo();
+            //fd_kitchen.push_back(fd);
+            //Kitchen kitchen(multiplier, nb_cook, replace, fd_fifo);
+        }
+    } else {
+        for (size_t i = 0; i < fd_kitchen.size(); i++)
+            //if ((tmp = get_status(fd_kitchen[i])) < (nb_cook * 2))
+            //   sent_pizza((nb_cook * 2) - tmp, fd_kitchen[i]);
+        if (tab_pizza.empty() != true)
+            //create new kitchen();
+    }*/
     Kitchen kitchen(multiplier, nb_cook, replace);
     kitchen.clean_cook();
     std::cout << "Kitchen Finish" << std::endl;
@@ -201,7 +218,8 @@ void Core::parse_pizza(std::string str)
 
 void Core::status()
 {
-
+    if (fd_kitchen.empty() == true)
+        std::cout << "No cook running" << std::endl;
 }
 
 void Core::restaurant()
@@ -217,7 +235,7 @@ void Core::restaurant()
             str = str.substr(0, str.size() - 1);
         if ((clock() - timer) > (replace * 1000)) {
             timer = clock();
-            //refill_kitchen();
+            //refill_kitchen(); A FAIRE COTE KITCHEN
         }
         if (str.compare("status") == 0)
             status();

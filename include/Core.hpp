@@ -30,5 +30,5 @@ class Core {
         float multiplier;
         int nb_cook;
         int replace;
-        int nb_kitchen;
+        std::vector<int> fd_kitchen;
 };
