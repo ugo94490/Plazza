@@ -29,24 +29,30 @@ Kitchen::~Kitchen()
 
 void Kitchen::refill_kitchen()
 {
-
+    for (int i = 0; i <= APizza::PizzaIngredient::Chief_Love; i++)
+        ingredient[static_cast<APizza::PizzaIngredient>(i)]++;
 }
 
 void Kitchen::loop()
 {
     static clock_t timer = 0;
+    static clock_t ingredient_timer = 0;
 
     while ((clock() - timer) < 5000000) {
         //getStatus = if (getstatus == running) timer = clock();  // ENLEVER LE TIMER = CLOCK en dessous
         if (pizza.empty() != true) {
             for (size_t i = pizza.size() - 1; i >= 0; i--) {
-                if (this->create_cook(pizza[i], multiplier) == 0) {
+                if (this->check_ingredients(pizza[i]) && this->create_cook(pizza[i], multiplier) == 0) {
                     pizza.pop_back();
                     timer = clock();
                     break;
                 }
             }
             //std::cout << "SIZE :" << pizza.size() << std::endl;
+        }
+        if ((clock() - ingredient_timer) >= refill * 1000) {
+            ingredient_timer = clock();
+            this->refill_kitchen();
         }
     }
 }
@@ -90,6 +96,18 @@ int Kitchen::create_cook(std::shared_ptr<APizza> pizza, int multiplier) {
     }
     //std::cout << "stock max atin et pas de thread dispo" << std::endl;
     return 84;
+}
+
+bool Kitchen::check_ingredients(std::shared_ptr<APizza> pizza)
+{
+    auto ingredients = pizza->getIngredients();
+
+    for (auto i : ingredients)
+        if (ingredient[i] < 1)
+            return false;
+    for (auto i : ingredients)
+        ingredient[i]--;
+    return true;
 }
 
 void Kitchen::clean_cook() {
