@@ -50,6 +50,7 @@ class APizza
         virtual ~APizza() = 0;
         APizza::PizzaType getType(void);
         APizza::PizzaSize getSize(void);
+        std::vector<APizza::PizzaIngredient> getIngredients();
         int getTime(void);
         static std::string pack(std::shared_ptr<APizza>);
         static std::shared_ptr<APizza> unpack(std::string);

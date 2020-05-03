@@ -21,6 +21,7 @@ class Kitchen {
         void loop();
         int getStatus();
         int create_cook(std::shared_ptr<APizza> pizza, int multiplier);
+        bool check_ingredients(std::shared_ptr<APizza> pizza);
         void clean_cook();
 
     private:

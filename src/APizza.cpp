@@ -28,6 +28,12 @@ APizza::PizzaSize APizza::getSize(void)
     return (size);
 }
 
+std::vector<APizza::PizzaIngredient> APizza::getIngredients()
+{
+    return (ingredient);
+}
+
+
 int APizza::getTime(void)
 {
     return (time);
