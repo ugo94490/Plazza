@@ -36,7 +36,7 @@ void Kitchen::loop()
 {
     static clock_t timer = 0;
 
-    while ((clock() - timer) < 5000000) {
+    while ((clock() - timer) < 5000000 && getStatus() != nb_cook * 2) {
         //getStatus = if (getstatus == running) timer = clock();  // ENLEVER LE TIMER = CLOCK en dessous
         if (pizza.empty() != true) {
             for (size_t i = pizza.size() - 1; i >= 0; i--) {
@@ -53,11 +53,11 @@ void Kitchen::loop()
 
 int Kitchen::getStatus()
 {
-    int value = 6;
+    int value = nb_cook * 2;
     int stock = -1;
 
     value -= pizza.size();
-    for (size_t i = 0; i < 3; i++) {
+    for (size_t i = 0; i < this->actual_cook; i++) {
         stock = this->cook[i]->get_status();
         if (stock == 1) {
             value--;
@@ -69,14 +69,14 @@ int Kitchen::getStatus()
 int Kitchen::create_cook(std::shared_ptr<APizza> pizza, int multiplier) {
     int status = -1;
     
-    if (this->actual_cook != 3) {
+    if (this->actual_cook != this->nb_cook) {
         std::shared_ptr<Cook> ptr(new Cook(pizza, multiplier));
         this->cook.push_back(ptr);
         this->actual_cook += 1;
         //std::cout << "thread crée et lancé avec succés" << std::endl;
         return 0;
     } else {
-        for (size_t i = 0; i < 3; i++) {
+        for (size_t i = 0; i < this->nb_cook; i++) {
             printf("%d\n", i);
             printf("%d\n", this->nb_cook);
             status = this->cook[i]->get_status();
