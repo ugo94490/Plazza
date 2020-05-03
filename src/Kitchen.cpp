@@ -24,6 +24,7 @@ Kitchen::Kitchen(int multi, int nb, int temps)
 
 Kitchen::~Kitchen()
 {
+    this->clean_cook();
 }
 
 void Kitchen::refill_kitchen()
@@ -36,6 +37,7 @@ void Kitchen::loop()
     static clock_t timer = 0;
 
     while ((clock() - timer) < 5000000) {
+        //getStatus = if (getstatus == running) timer = clock();  // ENLEVER LE TIMER = CLOCK en dessous
         if (pizza.empty() != true) {
             for (size_t i = pizza.size() - 1; i >= 0; i--) {
                 if (this->create_cook(pizza[i], multiplier) == 0) {

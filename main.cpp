@@ -196,12 +196,13 @@ void Core::parse_pizza(std::string str)
         std::cout << "  Size :" << tab_pizza[i]->getSize() << std::endl;
     }/*
     if (fd_kitchen.empty() == true) {
-        //create new kitchen
+        //create new kitchen fct :
         nb = (tab_pizza.size() / (nb_cook * 2));
         nb += (tab_pizza.size() / (nb_cook * 2)) % 6 != 0 ? 1 : 0;
         for (int i = 0; i < nb; i++) {
             //fd = mkfifo();
             //fd_kitchen.push_back(fd);
+            //fork
             //Kitchen kitchen(multiplier, nb_cook, replace, fd_fifo);
         }
     } else {
@@ -209,10 +210,9 @@ void Core::parse_pizza(std::string str)
             //if ((tmp = get_status(fd_kitchen[i])) < (nb_cook * 2))
             //   sent_pizza((nb_cook * 2) - tmp, fd_kitchen[i]);
         if (tab_pizza.empty() != true)
-            //create new kitchen();
+            //create new kitchen fct
     }*/
     Kitchen kitchen(multiplier, nb_cook, replace);
-    kitchen.clean_cook();
     std::cout << "Kitchen Finish" << std::endl;
 }
 
