@@ -7,6 +7,7 @@
 
 #include "Kitchen.hpp"
 #include "Margarita.hpp"
+#include "Cook.hpp"
 
 Kitchen::Kitchen(int multi, int nb, int temps)
 {
@@ -14,10 +15,9 @@ Kitchen::Kitchen(int multi, int nb, int temps)
     nb_cook = nb;
     refill = temps;
     actual_cook = 0;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 6; i++) {
         std::shared_ptr<APizza> ptr (new Margarit(APizza::Margarita, APizza::S));
         pizza.push_back(ptr);
-        //std::cout << APizza::pack(ptr) << std::endl;
     }
     loop();
 }
@@ -38,11 +38,17 @@ void Kitchen::loop()
     static clock_t timer = 0;
     static clock_t ingredient_timer = 0;
 
-    while ((clock() - timer) < 5000000 && getStatus() != nb_cook * 2) {
-        //getStatus = if (getstatus == running) timer = clock();  // ENLEVER LE TIMER = CLOCK en dessous
+    while (1) {
+        if (getStatus() == nb_cook * 2) {
+            timer = clock();
+            while ((clock() - timer) < 5000000) {};
+            if (getStatus() == nb_cook * 2)
+                return;
+        }
         if (pizza.empty() != true) {
-            for (size_t i = pizza.size() - 1; i >= 0; i--) {
-                if (this->check_ingredients(pizza[i]) && this->create_cook(pizza[i], multiplier) == 0) {
+            for (int i = pizza.size() - 1; i >= 0; i--) {
+                if (/*this->check_ingredients(pizza[i]) && */this->ping_cook() > 0) {
+                    setup_cooking(pizza[i]);
                     pizza.pop_back();
                     timer = clock();
                     break;
@@ -55,6 +61,34 @@ void Kitchen::loop()
             this->refill_kitchen();
         }
     }
+}
+
+void Kitchen::setup_cooking(std::shared_ptr<APizza> tmp_pizza) {
+    if (ping_cook() == 2) {
+        std::cout << "NEW COOKER" << std::endl;
+        std::shared_ptr<Cook> ptr(new Cook(this->multiplier, this->actual_cook));
+        this->actual_cook += 1;
+        ptr->get_pizzou(tmp_pizza);
+        this->cook.push_back(ptr);
+    } else {
+        for (size_t i = 0; i < this->actual_cook; i++) {
+            if (this->cook[i]->get_status() == 2) {
+                std::cout << "RE USE COOKER " << i <<std::endl;
+                cook[i]->get_pizzou(tmp_pizza);
+                cook[i]->unlock_cooker();
+                return;
+            }
+        }
+    }
+}
+
+int Kitchen::ping_cook() {
+    for (size_t i = 0; i < this->actual_cook; i++)
+        if (this->cook[i]->get_status() == 2)
+            return 1;
+    if (this->actual_cook < this->nb_cook)
+        return 2;
+    return 0;
 }
 
 int Kitchen::getStatus()
@@ -70,32 +104,6 @@ int Kitchen::getStatus()
         }
     }
     return value;
-}
-
-int Kitchen::create_cook(std::shared_ptr<APizza> pizza, int multiplier) {
-    int status = -1;
-    
-    if (this->actual_cook != this->nb_cook) {
-        std::shared_ptr<Cook> ptr(new Cook(pizza, multiplier));
-        this->cook.push_back(ptr);
-        this->actual_cook += 1;
-        //std::cout << "thread crée et lancé avec succés" << std::endl;
-        return 0;
-    } else {
-        for (size_t i = 0; i < this->nb_cook; i++) {
-            printf("%d\n", i);
-            printf("%d\n", this->nb_cook);
-            status = this->cook[i]->get_status();
-            if (status == 2) {
-                this->cook[i]->wait_thread();
-                this->cook[i]->start_thread(pizza,multiplier);
-                //std::cout << "thread lancer avec la fonction" << std::endl;
-                return 0;
-            }
-        }
-    }
-    //std::cout << "stock max atin et pas de thread dispo" << std::endl;
-    return 84;
 }
 
 bool Kitchen::check_ingredients(std::shared_ptr<APizza> pizza)
@@ -116,10 +124,9 @@ void Kitchen::clean_cook() {
     for (auto it = this->cook.begin(); it != this->cook.end(); it++) {
         status = it->get()->get_status();
         if (status == 2) {
-            it->get()->wait_thread();
+            it->get()->~Cook();
             this->cook.erase(it--);
             this->actual_cook -= 1;
-            //std::cout << "thread suprimer" << std::endl;
         }
     }
 }

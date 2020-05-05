@@ -7,28 +7,29 @@
 
 #pragma once
 
+#include "Kitchen.hpp"
 #include "APizza.hpp"
 #include <thread>
 #include <iostream>
-
-
-typedef struct arg_s {
-    std::shared_ptr<APizza> pizza;
-    int multiplier;
-} arg_t;
-
+#include <mutex>
+#include <condition_variable>
 
 class Cook {
     private:
+        int id = 0;
+        int status = -1;
+        std::thread _thread;
+        std::condition_variable cooker_locker;
+        std::mutex cooker_mutex;
+        std::mutex tmp_pizza_mutex;
+        std::shared_ptr<APizza> tmp_pizza = nullptr;
+        int cook_mutiplier;
 
-    int status = -1;
-    std::thread _thread;
-    
-    
     public:
-        Cook(std::shared_ptr<APizza> pizza, int multiplier);
-        ~Cook() = default;
+        Cook(int multiplier, int id);
+        ~Cook();
         int get_status() const;
-        void wait_thread();
-        void start_thread(std::shared_ptr<APizza> pizza, int multiplier);
+        void unlock_cooker();
+        void get_pizzou(std::shared_ptr<APizza> pizza);
+        void loop();
 };
