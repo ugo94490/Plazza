@@ -198,7 +198,7 @@ void Core::parse_pizza(std::string str)
     if (fd_kitchen.empty() == true) {
         //create new kitchen fct :
         nb = (tab_pizza.size() / (nb_cook * 2));
-        nb += (tab_pizza.size() / (nb_cook * 2)) % 6 != 0 ? 1 : 0;
+        nb += (nb_cook * 2) % 6 != 0 ? 1 : 0;
         for (int i = 0; i < nb; i++) {
             //fd = mkfifo();
             //fd_kitchen.push_back(fd);
@@ -233,10 +233,8 @@ void Core::restaurant()
             return;
         if (str[str.size() - 1] == '\n')
             str = str.substr(0, str.size() - 1);
-        if ((clock() - timer) > (replace * 1000)) {
+        if ((clock() - timer) > (replace * 1000))
             timer = clock();
-            //refill_kitchen(); A FAIRE COTE KITCHEN
-        }
         if (str.compare("status") == 0)
             status();
         else
