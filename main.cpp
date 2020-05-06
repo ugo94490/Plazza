@@ -207,7 +207,7 @@ void Core::create_kitchen(std::vector<std::shared_ptr<APizza>> tab_pizza)
     socklen_t lenght = sizeof(my_addr);
 
     nb = (tab_pizza.size() / (nb_cook * 2));
-    nb += (nb_cook * 2) % 6 != 0 ? 1 : 0;
+    nb += (tab_pizza.size()) % (nb_cook * 2) != 0 ? 1 : 0;
     for (int i = 0; i < nb; i++) {
         pid = fork();
         if (pid == 0) {
@@ -274,6 +274,7 @@ void Core::parse_pizza(std::string str)
         std::cout << "Pizza :" << tab_pizza[i]->getType();
         std::cout << "  Size :" << tab_pizza[i]->getSize() << std::endl;
     }
+    std::cout << fd_tab.size() << std::endl;
     if (fd_tab.size() == 0) {
         create_kitchen(tab_pizza);
     } else {

@@ -17,15 +17,16 @@ Kitchen::Kitchen(int multi, int nb, int temps, int fd)
     actual_cook = 0;
     fd_socket = fd;
     kitchen_fd = IPC::setUpListener(4242);
-    for (int i = 0; i < 6; i++) {
+    /*for (int i = 0; i < 6; i++) {
         std::shared_ptr<APizza> ptr (new Margarit(APizza::Margarita, APizza::S));
         pizza.push_back(ptr);
-    }
+    }*/
     loop();
 }
 
 Kitchen::~Kitchen()
 {
+    dprintf(fd_socket, "destroy");
     this->clean_cook();
 }
 
@@ -41,6 +42,7 @@ void Kitchen::loop()
     static clock_t ingredient_timer = 0;
 
     while (1) {
+        recieveOrder(fd_socket);
         if (getStatus() == nb_cook * 2) {
             timer = clock();
             while ((clock() - timer) < 5000000) {};
@@ -216,7 +218,7 @@ void Kitchen::recieveOrder(int cfd)
             tmp = tmp + std::to_string(getStatus()) + " dans la cuisine.";
             dprintf(fd_socket, tmp.c_str());
         } else {
-            std::cout << "RECU" << std::endl;
+            std::cout << "PIZZA" << std::endl;
             check_pizza(str);
         }
     }
