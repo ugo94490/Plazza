@@ -13,12 +13,13 @@
 #include <unistd.h>
 #include <deque>
 #include <mutex>
+#include "IPC.hpp"
 
 class Cook;
 class Kitchen {
     public:
         Kitchen() = default;
-        Kitchen(int multiplier, int nb_cook, int time);
+        Kitchen(int multiplier, int nb_cook, int time, int fd);
         ~Kitchen();
         void refill_kitchen();
         void loop();
@@ -27,7 +28,10 @@ class Kitchen {
         int getStatus();
         bool check_ingredients(std::shared_ptr<APizza> pizza);
         void clean_cook();
-
+        void recieveOrder(int cfd);
+        std::string readSocket(int cfd);
+        void check_pizza(std::string str);
+        int count_dot(std::string str);
 
     private:
         int nb_cook;
@@ -35,6 +39,8 @@ class Kitchen {
         int refill;
         std::vector<std::shared_ptr<Cook>> cook;
         std::vector<std::shared_ptr<APizza>> pizza;
+        int fd_socket;
+        int kitchen_fd;
     protected:
         int multiplier;
         std::map<APizza::PizzaIngredient, int> ingredient;

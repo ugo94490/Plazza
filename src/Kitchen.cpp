@@ -9,12 +9,14 @@
 #include "Margarita.hpp"
 #include "Cook.hpp"
 
-Kitchen::Kitchen(int multi, int nb, int temps)
+Kitchen::Kitchen(int multi, int nb, int temps, int fd)
 {
     multiplier = multi;
     nb_cook = nb;
     refill = temps;
     actual_cook = 0;
+    fd_socket = fd;
+    kitchen_fd = IPC::setUpListener(4242);
     for (int i = 0; i < 6; i++) {
         std::shared_ptr<APizza> ptr (new Margarit(APizza::Margarita, APizza::S));
         pizza.push_back(ptr);
@@ -127,6 +129,95 @@ void Kitchen::clean_cook() {
             it->get()->~Cook();
             this->cook.erase(it--);
             this->actual_cook -= 1;
+        }
+    }
+}
+
+int my_putstr(int fd, char *str)
+{
+    int i = 0;
+
+    for (; str[i]; i++);
+    return write(fd, str, i);;
+}
+
+int error(const char *msg)
+{
+    std::cout << msg <<  std::endl;
+    return 84;
+}
+
+int IPC::setUpListener(int port)
+{
+    struct sockaddr_in saddr = IPC::init_my_addr(port);
+    int cfd;
+
+    cfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (cfd < 0)
+        return (error("socket creation error\n"));
+    if (connect(cfd, (struct sockaddr *)&saddr, sizeof(saddr)) < 0) {
+        close(cfd);
+        return (error("connection error\n"));
+    }
+    return cfd;
+}
+
+int Kitchen::count_dot(std::string str)
+{
+    int count = 0;
+
+    for (int i = 0; str[i]; i++)
+        if (str[i] == ':')
+            count++;
+    return (count);
+}
+
+void Kitchen::check_pizza(std::string str)
+{
+    int nb = count_dot(str);
+    int off = 0;
+    int start = 0;
+    std::string tmp;
+
+    std::cout << str << std::endl;
+    std::cout << nb << std::endl;
+    for (int i = 0; i < nb; i++) {
+        off = str.find(':', 0);
+        tmp = str.substr(0, off);
+        std::cout << "TO UNPACK " << tmp << std::endl;
+        pizza.push_back(APizza::unpack(tmp));
+    }
+}
+
+std::string Kitchen::readSocket(int cfd)
+{
+    char buffer[108 + 1] = {0};
+    int len = read(cfd, buffer, 108);
+    std::string res = "";
+
+    while (len > 0) {
+        buffer[108] = 0;
+        res += std::string(buffer);
+        len = read(cfd, buffer, 108);
+    }
+    return res;
+}
+
+void Kitchen::recieveOrder(int cfd)
+{
+    std::string str = readSocket(cfd);
+    std::string tmp = "Il y a";
+
+    if (str.empty() == false) {
+        std::cout << "RECU" << std::endl;
+        if (str == "nb_pizza")
+            dprintf(fd_socket, std::to_string(getStatus()).c_str());
+        else if (str == "status") {
+            tmp = tmp + std::to_string(getStatus()) + " dans la cuisine.";
+            dprintf(fd_socket, tmp.c_str());
+        } else {
+            std::cout << "RECU" << std::endl;
+            check_pizza(str);
         }
     }
 }

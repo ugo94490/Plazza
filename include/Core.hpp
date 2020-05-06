@@ -26,9 +26,15 @@ class Core {
         void check_pizza(std::shared_ptr<APizza> pizza);
         std::shared_ptr<APizza> fill_pizza(std::vector<std::string> tab);
         void status();
+        void create_kitchen(std::vector<std::shared_ptr<APizza>> tab_pizza);
+        std::vector<std::shared_ptr<APizza>> sent_pizza(int nb, int i, std::vector<std::shared_ptr<APizza>> tab_pizza);
+        int get_status(int fd);
     private:
         float multiplier;
         int nb_cook;
         int replace;
-        std::vector<int> fd_kitchen;
+        int fd_socket;
+        std::vector<int> fd_tab;
+        fd_set current;
+        fd_set ready;
 };
