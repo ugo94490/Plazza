@@ -65,7 +65,7 @@ void Kitchen::loop()
 
 void Kitchen::setup_cooking(std::shared_ptr<APizza> tmp_pizza) {
     if (ping_cook() == 2) {
-        std::cout << "NEW COOKER" << std::endl;
+        // std::cout << "NEW COOKER" << std::endl;
         std::shared_ptr<Cook> ptr(new Cook(this->multiplier, this->actual_cook));
         this->actual_cook += 1;
         ptr->get_pizzou(tmp_pizza);
@@ -73,7 +73,7 @@ void Kitchen::setup_cooking(std::shared_ptr<APizza> tmp_pizza) {
     } else {
         for (size_t i = 0; i < this->actual_cook; i++) {
             if (this->cook[i]->get_status() == 2) {
-                std::cout << "RE USE COOKER " << i <<std::endl;
+                // std::cout << "RE USE COOKER " << i <<std::endl;
                 cook[i]->get_pizzou(tmp_pizza);
                 cook[i]->unlock_cooker();
                 return;
