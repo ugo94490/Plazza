@@ -15,7 +15,10 @@ Kitchen::Kitchen(int multi, int nb, int temps)
     nb_cook = nb;
     refill = temps;
     actual_cook = 0;
-    for (int i = 0; i < 6; i++) {
+    
+    for (int i = 0; i < 5; i++)
+        refill_kitchen();
+    for (int i = 0; i < 10; i++) {
         std::shared_ptr<APizza> ptr (new Margarit(APizza::Margarita, APizza::S));
         pizza.push_back(ptr);
     }
@@ -47,14 +50,13 @@ void Kitchen::loop()
         }
         if (pizza.empty() != true) {
             for (int i = pizza.size() - 1; i >= 0; i--) {
-                if (/*this->check_ingredients(pizza[i]) && */this->ping_cook() > 0) {
+                if (this->check_ingredients(pizza[i]) && this->ping_cook() > 0) {
                     setup_cooking(pizza[i]);
                     pizza.pop_back();
                     timer = clock();
                     break;
                 }
             }
-            //std::cout << "SIZE :" << pizza.size() << std::endl;
         }
         if ((clock() - ingredient_timer) >= refill * 1000) {
             ingredient_timer = clock();
@@ -111,8 +113,9 @@ bool Kitchen::check_ingredients(std::shared_ptr<APizza> pizza)
     auto ingredients = pizza->getIngredients();
 
     for (auto i : ingredients)
-        if (ingredient[i] < 1)
+        if (ingredient[i] < 1) {
             return false;
+        }
     for (auto i : ingredients)
         ingredient[i]--;
     return true;
