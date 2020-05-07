@@ -188,13 +188,14 @@ std::vector<std::shared_ptr<APizza>> Core::sent_pizza(int nb, int fd, std::vecto
     std::string data;
     int j = 0;
 
-    for (; j < nb && j < tab_pizza.size(); j++) {
+    if (tab_pizza.size() < nb)
+        nb = tab_pizza.size();
+    for (; j < nb; j++) {
         data = APizza::pack(tab_pizza[j]) + ':';
         dprintf(fd, data.c_str());
-        tab_pizza.erase(tab_pizza.begin() + j);
-        j--;
     }
-
+    for (int k = 0; k < j; k++)
+        tab_pizza.erase(tab_pizza.begin());
     return (tab_pizza);
 }
 
@@ -212,7 +213,9 @@ void Core::create_kitchen(std::vector<std::shared_ptr<APizza>> tab_pizza)
     for (int i = 0; i < nb; i++) {
         pid = fork();
         if (pid == 0) {
+            std::cout << "KITCHEN CREATE" << std::endl;
             Kitchen kitchen(multiplier, nb_cook, replace);
+            std::cout << "KITCHEN FINISH" << std::endl;
             exit(0);
         } else {
             FD_ZERO(&ready);
@@ -267,9 +270,9 @@ void Core::parse_pizza(std::string str)
 
     tab_command = divide_command(str);
     tab_pizza = create_command(tab_command);
-    if (fd_tab.size() == 0) {
+    //if (fd_tab.size() == 0) {
         create_kitchen(tab_pizza);
-    } else {
+    /*} else {
         for (size_t i = 0; i < fd_tab.size(); i++) {
             if ((tmp = get_status(i)) < (nb_cook * 2))
                 if (tmp == -1)
@@ -279,7 +282,7 @@ void Core::parse_pizza(std::string str)
         }
         if (tab_pizza.empty() != true)
             create_kitchen(tab_pizza);
-    }
+    }*/
 }
 
 void Core::status()
