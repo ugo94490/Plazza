@@ -5,6 +5,7 @@
 ** Kitchen.cpp
 */
 
+#include <fcntl.h>
 #include "Kitchen.hpp"
 #include "Margarita.hpp"
 #include "Cook.hpp"
@@ -17,6 +18,7 @@ Kitchen::Kitchen(int multi, int nb, int temps, int fd)
     actual_cook = 0;
     fd_socket = fd;
     kitchen_fd = IPC::setUpListener(4242);
+    fcntl(kitchen_fd, F_SETFL, fcntl(kitchen_fd, F_GETFL, 0) | O_NONBLOCK);
     /*for (int i = 0; i < 6; i++) {
         std::shared_ptr<APizza> ptr (new Margarit(APizza::Margarita, APizza::S));
         pizza.push_back(ptr);
@@ -41,14 +43,10 @@ void Kitchen::loop()
     static clock_t timer = 0;
     static clock_t ingredient_timer = 0;
 
-    while (1) {
-        recieveOrder(fd_socket);
-        if (getStatus() == nb_cook * 2) {
+    while ((clock() - timer) < 5000000) {
+        recieveOrder(kitchen_fd);
+        if (getStatus() < (nb_cook * 2))
             timer = clock();
-            while ((clock() - timer) < 5000000) {};
-            if (getStatus() == nb_cook * 2)
-                return;
-        }
         if (pizza.empty() != true) {
             for (int i = pizza.size() - 1; i >= 0; i--) {
                 if (/*this->check_ingredients(pizza[i]) && */this->ping_cook() > 0) {
@@ -58,13 +56,13 @@ void Kitchen::loop()
                     break;
                 }
             }
-            //std::cout << "SIZE :" << pizza.size() << std::endl;
         }
         if ((clock() - ingredient_timer) >= refill * 1000) {
             ingredient_timer = clock();
             this->refill_kitchen();
         }
     }
+    this->~Kitchen();
 }
 
 void Kitchen::setup_cooking(std::shared_ptr<APizza> tmp_pizza) {
@@ -180,14 +178,13 @@ void Kitchen::check_pizza(std::string str)
     int off = 0;
     int start = 0;
     std::string tmp;
+    std::shared_ptr<APizza> ptr;
 
-    std::cout << str << std::endl;
-    std::cout << nb << std::endl;
     for (int i = 0; i < nb; i++) {
         off = str.find(':', 0);
         tmp = str.substr(0, off);
-        std::cout << "TO UNPACK " << tmp << std::endl;
-        pizza.push_back(APizza::unpack(tmp));
+        ptr = APizza::unpack(tmp);
+        pizza.push_back(ptr);
     }
 }
 
@@ -197,7 +194,8 @@ std::string Kitchen::readSocket(int cfd)
     int len = read(cfd, buffer, 108);
     std::string res = "";
 
-    while (len > 0) {
+    res = std::string(buffer);
+    while (len >= 108) {
         buffer[108] = 0;
         res += std::string(buffer);
         len = read(cfd, buffer, 108);

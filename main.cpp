@@ -274,7 +274,6 @@ void Core::parse_pizza(std::string str)
         std::cout << "Pizza :" << tab_pizza[i]->getType();
         std::cout << "  Size :" << tab_pizza[i]->getSize() << std::endl;
     }
-    std::cout << fd_tab.size() << std::endl;
     if (fd_tab.size() == 0) {
         create_kitchen(tab_pizza);
     } else {
@@ -339,8 +338,8 @@ void Core::restaurant()
             return;
         if (str[str.size() - 1] == '\n')
             str = str.substr(0, str.size() - 1);
-        if ((clock() - timer) > (replace * 1000))
-            timer = clock();
+        /*if ((clock() - timer) > (replace * 1000))
+            timer = clock();*/
         if (str.compare("status") == 0)
             status();
         else
