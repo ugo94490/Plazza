@@ -10,13 +10,14 @@
 #include "Margarita.hpp"
 #include "Cook.hpp"
 
-Kitchen::Kitchen(int multi, int nb, int temps)
+Kitchen::Kitchen(int multi, int nb, int temps, int id)
 {
     multiplier = multi;
     nb_cook = nb;
     refill = temps;
     actual_cook = 0;
-
+    this->id = id;
+    std::cout << "ID ==>" << this->id <<std::endl;
     for (int i = 0; i < 5; i++)
         refill_kitchen();
     kitchen_fd = IPC::setUpListener(4242);
@@ -46,6 +47,7 @@ void Kitchen::loop()
         if (getStatus() < (nb_cook * 2))
             timer = clock();
         if (pizza.empty() != true) {
+            //std::cout << "KITCHEN ID ==> " << this->id << " PIZZA SIZE ==>  "<< pizza.size() <<std::endl;
             for (int i = pizza.size() - 1; i >= 0; i--) {
                 if (this->check_ingredients(pizza[i]) && this->ping_cook() > 0) {
                     setup_cooking(pizza[i]);

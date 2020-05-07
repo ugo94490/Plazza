@@ -188,14 +188,22 @@ std::vector<std::shared_ptr<APizza>> Core::sent_pizza(int nb, int fd, std::vecto
     std::string data;
     int j = 0;
 
-    if (tab_pizza.size() < nb)
-        nb = tab_pizza.size();
-    for (; j < nb; j++) {
-        data = APizza::pack(tab_pizza[j]) + ':';
+    std::cout << "THIS FD ==> " << fd <<std::endl;
+    while (j < nb && tab_pizza.size() != 0) {
+        data = APizza::pack(tab_pizza.front()) + ':';
         dprintf(fd, data.c_str());
-    }
-    for (int k = 0; k < j; k++)
         tab_pizza.erase(tab_pizza.begin());
+        j++;
+    }
+    std::cout << "ON A LOOP J ==> " << j << std::endl;
+    // if (tab_pizza.size() < nb)
+    //     nb = tab_pizza.size();
+    // for (; j < nb; j++) {
+    //     data = APizza::pack(tab_pizza[j]) + ':';
+    //     dprintf(fd, data.c_str());
+    // }
+    // for (int k = 0; k < j; k++)
+    //     tab_pizza.erase(tab_pizza.begin());
     return (tab_pizza);
 }
 
@@ -214,7 +222,7 @@ void Core::create_kitchen(std::vector<std::shared_ptr<APizza>> tab_pizza)
         pid = fork();
         if (pid == 0) {
             std::cout << "KITCHEN CREATE" << std::endl;
-            Kitchen kitchen(multiplier, nb_cook, replace);
+            Kitchen kitchen(multiplier, nb_cook, replace, i);
             std::cout << "KITCHEN FINISH" << std::endl;
             exit(0);
         } else {
@@ -227,9 +235,11 @@ void Core::create_kitchen(std::vector<std::shared_ptr<APizza>> tab_pizza)
                     fd_kitchen = accept(fd_socket, (struct sockaddr *) &my_addr, &lenght);
                     FD_SET(fd_kitchen, &current);
                     fd_tab.push_back(fd_kitchen);
+                    std::cout << "IS SET" << std::endl;
                 }
             }
-            tab_pizza = sent_pizza(nb_cook * 2, fd_kitchen, tab_pizza);
+            ok = false;
+            tab_pizza = sent_pizza(nb_cook * 2, fd_kitchen, tab_pizza); //sent pizza ici
         }
     }
 }

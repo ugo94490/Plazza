@@ -18,7 +18,7 @@ void Cook::unlock_cooker() {
 void Cook::loop() {
     while (1) {
         usleep((this->tmp_pizza->getTime() * this->cook_mutiplier) * 1000000);
-        std::cout << "===" << APizza::pack(tmp_pizza) << "===" << std::endl;
+        std::cout << "===" << APizza::pack(tmp_pizza) << "===" << " ID THREAD ==> "<< this->id << std::endl;
         this->status = 2;
         std::unique_lock<std::mutex> tmp_mutex(this->cooker_mutex);
         this->cooker_locker.wait(tmp_mutex);
