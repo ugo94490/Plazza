@@ -53,7 +53,7 @@ void Kitchen::loop()
                     setup_cooking(pizza[i]);
                     pizza.pop_back();
                     timer = clock();
-                    std::cout << "STATUS ==> "<< getStatus() << std::endl;
+                    // std::cout << "STATUS ==> "<< getStatus() << std::endl;
                     break;
                 }
             }
@@ -209,14 +209,14 @@ void Kitchen::recieveOrder(int cfd)
     std::string tmp = "Il y a";
 
     if (str.empty() == false) {
-        std::cout << "RECU" << std::endl;
+        // std::cout << "RECU" << std::endl;
         if (str == "nb_pizza")
             dprintf(kitchen_fd, std::to_string(getStatus()).c_str());
         else if (str == "status") {
             tmp = tmp + std::to_string(getStatus()) + " dans la cuisine.";
             dprintf(kitchen_fd, tmp.c_str());
         } else {
-            std::cout << "PIZZA" << std::endl;
+            // std::cout << "PIZZA" << std::endl;
             check_pizza(str);
         }
     }

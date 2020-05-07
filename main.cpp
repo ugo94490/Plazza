@@ -188,12 +188,17 @@ std::vector<std::shared_ptr<APizza>> Core::sent_pizza(int nb, int fd, std::vecto
     std::string data;
     int j = 0;
 
+    std::cout << "SIZE_1 ==> " << tab_pizza.size() << std::endl;
     for (; j < nb && j < tab_pizza.size(); j++) {
         data = APizza::pack(tab_pizza[j]) + ':';
         dprintf(fd, data.c_str());
+        tab_pizza.erase(tab_pizza.begin() + j);
+        j--;
     }
-    for (int i = 0; i < j; i++)
-        tab_pizza.erase(tab_pizza.begin());
+    std::cout << "SIZE_2 ==> " << tab_pizza.size() << std::endl;
+    // for (int i = 0; i < j; i++)
+    //     tab_pizza.erase(tab_pizza.begin());
+
     return (tab_pizza);
 }
 
@@ -220,16 +225,12 @@ void Core::create_kitchen(std::vector<std::shared_ptr<APizza>> tab_pizza)
             FD_SET(fd_socket, &ready);
             while (ok != true) {
                 select(FD_SETSIZE, &ready, NULL, NULL, NULL);
-                //for (int j = 0; j < FD_SETSIZE; j++) {
-                    if (FD_ISSET(fd_socket, &ready)) {
-                        std::cout << "ON ATT LE PING" << std::endl;
-                        ok = true;
-                        fd_kitchen = accept(fd_socket, (struct sockaddr *) &my_addr, &lenght);
-                        FD_SET(fd_kitchen, &current);
-                        fd_tab.push_back(fd_kitchen);
-                        std::cout << "ON A LE PING" << std::endl;
-                    }
-                //}
+                if (FD_ISSET(fd_socket, &ready)) {
+                    ok = true;
+                    fd_kitchen = accept(fd_socket, (struct sockaddr *) &my_addr, &lenght);
+                    FD_SET(fd_kitchen, &current);
+                    fd_tab.push_back(fd_kitchen);
+                }
             }
             tab_pizza = sent_pizza(nb_cook * 2, fd_kitchen, tab_pizza);
         }
@@ -243,8 +244,8 @@ int Core::get_status(int i)
     int fd = fd_tab[i];
     bool ok = false;
 
-    std::cout << "SIZE_TAB:" << fd_tab.size() << std::endl;
-    std::cout << "I:" << i << std::endl;
+    //std::cout << "SIZE_TAB:" << fd_tab.size() << std::endl;
+    //std::cout << "I:" << i << std::endl;
     FD_ZERO(&tmp);
     FD_SET(fd, &tmp);
     select(FD_SETSIZE, &tmp, NULL, NULL, NULL);
@@ -257,8 +258,8 @@ int Core::get_status(int i)
             return (-1);
         //}
     } else {
-        std::cout << "NB_PIZZA" << std::endl;
-        write(fd_tab[i], "nb_pizza", 8);
+        //std::cout << "NB_PIZZA" << std::endl;
+        //write(fd_tab[i], "nb_pizza", 8);
         while (ok != true) {
             select(FD_SETSIZE, &tmp, NULL, NULL, NULL);
             if (FD_ISSET(fd_tab[i], &tmp)) {
@@ -280,19 +281,19 @@ void Core::parse_pizza(std::string str)
     tab_command = divide_command(str);
     tab_pizza = create_command(tab_command);
     for (size_t i = 0; i < tab_pizza.size(); i++) {
-        std::cout << "Pizza :" << tab_pizza[i]->getType();
-        std::cout << "  Size :" << tab_pizza[i]->getSize() << std::endl;
+        //std::cout << "Pizza :" << tab_pizza[i]->getType();
+        //std::cout << "  Size :" << tab_pizza[i]->getSize() << std::endl;
     }
     if (fd_tab.size() == 0) {
         create_kitchen(tab_pizza);
     } else {
-        std::cout << "DEUXIEME KITCHEN" << std::endl;
-        for (size_t i = 0; i < fd_tab.size(); i++)
+        for (size_t i = 0; i < fd_tab.size(); i++) {
             if ((tmp = get_status(i)) < (nb_cook * 2))
                 if (tmp == -1)
                     i -= 1;
                 else
                     tab_pizza = sent_pizza(tmp, fd_tab[i], tab_pizza);
+        }
         if (tab_pizza.empty() != true)
             create_kitchen(tab_pizza);
     }
