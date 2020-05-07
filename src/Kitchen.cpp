@@ -28,7 +28,6 @@ Kitchen::~Kitchen()
 {
     write(kitchen_fd, "destroy", 7);
     this->clean_cook();
-    //close(kitchen_fd);
 }
 
 void Kitchen::refill_kitchen()
@@ -52,7 +51,6 @@ void Kitchen::loop()
                     setup_cooking(pizza[i]);
                     pizza.pop_back();
                     timer = clock();
-                    // std::cout << "STATUS ==> "<< getStatus() << std::endl;
                     break;
                 }
             }
@@ -66,7 +64,6 @@ void Kitchen::loop()
 
 void Kitchen::setup_cooking(std::shared_ptr<APizza> tmp_pizza) {
     if (ping_cook() == 2) {
-        // std::cout << "NEW COOKER" << std::endl;
         std::shared_ptr<Cook> ptr(new Cook(this->multiplier, this->actual_cook));
         this->actual_cook += 1;
         ptr->get_pizzou(tmp_pizza);
@@ -74,7 +71,6 @@ void Kitchen::setup_cooking(std::shared_ptr<APizza> tmp_pizza) {
     } else {
         for (size_t i = 0; i < this->actual_cook; i++) {
             if (this->cook[i]->get_status() == 2) {
-                // std::cout << "RE USE COOKER " << i <<std::endl;
                 cook[i]->get_pizzou(tmp_pizza);
                 cook[i]->unlock_cooker();
                 return;
@@ -203,20 +199,47 @@ std::string Kitchen::readSocket(int cfd)
     return res;
 }
 
+void Kitchen::display_ingredient()
+{
+    std::string res = "Il y a ";
+    for (auto i = ingredient.begin(); i != ingredient.end(); i++) {
+        if (i->first == APizza::PizzaIngredient::Doe)
+            res += std::to_string(i->second) + " Doe";
+        if (i->first == APizza::PizzaIngredient::Tomato)
+            res += std::to_string(i->second) + " Tomato";
+        if (i->first == APizza::PizzaIngredient::Gruyere)
+            res += std::to_string(i->second) + " Gruyere";
+        if (i->first == APizza::PizzaIngredient::Ham)
+            res += std::to_string(i->second) + " Ham";
+        if (i->first == APizza::PizzaIngredient::Mushrooms)
+            res += std::to_string(i->second) + " Mushrooms";
+        if (i->first == APizza::PizzaIngredient::Steak)
+            res += std::to_string(i->second) + " Steak";
+        if (i->first == APizza::PizzaIngredient::Eggplant)
+            res += std::to_string(i->second) + " Eggplant";
+        if (i->first == APizza::PizzaIngredient::Goat_Cheese)
+            res += std::to_string(i->second) + " Goat Cheese";
+        if (i->first == APizza::PizzaIngredient::Chief_Love)
+            res += std::to_string(i->second) + " Chief Love";
+        res += ", ";
+    }
+    res[res.size() - 2] = '.';
+    std::cout << res << std::endl;
+}
+
 void Kitchen::recieveOrder(int cfd)
 {
     std::string str = readSocket(cfd);
-    std::string tmp = "Il y a";
+    std::string tmp = "Il y a ";
 
     if (str.empty() == false) {
-        // std::cout << "RECU" << std::endl;
         if (str == "nb_pizza")
             dprintf(kitchen_fd, std::to_string(getStatus()).c_str());
         else if (str == "status") {
-            tmp = tmp + std::to_string(getStatus()) + " dans la cuisine.";
-            dprintf(kitchen_fd, tmp.c_str());
+            tmp = tmp + std::to_string(getStatus()) + " place de libre dans la cuisine.";
+            std::cout << tmp << std::endl;
+            display_ingredient();
         } else {
-            // std::cout << "PIZZA" << std::endl;
             check_pizza(str);
         }
     }

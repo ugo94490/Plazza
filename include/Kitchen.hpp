@@ -32,6 +32,7 @@ class Kitchen {
         std::string readSocket(int cfd);
         void check_pizza(std::string str);
         int count_dot(std::string str);
+        void display_ingredient();
 
     private:
         int nb_cook;
