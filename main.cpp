@@ -212,8 +212,9 @@ void Core::create_kitchen(std::vector<std::shared_ptr<APizza>> tab_pizza)
         pid = fork();
         if (pid == 0) {
             std::cout << "CREATE KITCHEN" << std::endl;
-            Kitchen kitchen(multiplier, nb_cook, replace, fd_socket);
+            Kitchen kitchen(multiplier, nb_cook, replace);
             std::cout << "Kitchen Finish" << std::endl;
+            exit(0);
         } else {
             ready = current;
             while (ok != true) {
@@ -234,26 +235,31 @@ void Core::create_kitchen(std::vector<std::shared_ptr<APizza>> tab_pizza)
 
 int Core::get_status(int i)
 {
-    char *res;
+    char res[80];
     fd_set tmp;
     int fd = fd_tab[i];
     bool ok = false;
 
+    std::cout << "SIZE_TAB:" << fd_tab.size() << std::endl;
+    std::cout << "I:" << i << std::endl;
+    FD_ZERO(&tmp);
     FD_SET(fd, &tmp);
     select(FD_SETSIZE, &tmp, NULL, NULL, NULL);
     if (FD_ISSET(fd, &tmp)) {
-        recv(fd, res, 80, MSG_PEEK);
-        if (res == "destroy") {
+        read(fd, res, 80);
+        //std::cout << "Message:" << res << std::endl;
+        //if (res == "destroy") {
             fd_tab.erase(fd_tab.begin() + i);
             FD_ZERO(&tmp);
             return (-1);
-        }
+        //}
     } else {
-        send(fd_tab[i], "nb_pizza", 8, MSG_CONFIRM);
+        std::cout << "NB_PIZZA" << std::endl;
+        write(fd_tab[i], "nb_pizza", 8);
         while (ok != true) {
             select(FD_SETSIZE, &tmp, NULL, NULL, NULL);
             if (FD_ISSET(fd_tab[i], &tmp)) {
-                recv(fd, res, 80, MSG_PEEK);
+                read(fd, res, 80);
                 ok = true;
             }
         }

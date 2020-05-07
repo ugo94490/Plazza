@@ -10,13 +10,12 @@
 #include "Margarita.hpp"
 #include "Cook.hpp"
 
-Kitchen::Kitchen(int multi, int nb, int temps, int fd)
+Kitchen::Kitchen(int multi, int nb, int temps)
 {
     multiplier = multi;
     nb_cook = nb;
     refill = temps;
     actual_cook = 0;
-    fd_socket = fd;
     kitchen_fd = IPC::setUpListener(4242);
     fcntl(kitchen_fd, F_SETFL, fcntl(kitchen_fd, F_GETFL, 0) | O_NONBLOCK);
     /*for (int i = 0; i < 6; i++) {
@@ -28,8 +27,9 @@ Kitchen::Kitchen(int multi, int nb, int temps, int fd)
 
 Kitchen::~Kitchen()
 {
-    dprintf(fd_socket, "destroy");
+    write(kitchen_fd, "destroy", 7);
     this->clean_cook();
+    //close(kitchen_fd);
 }
 
 void Kitchen::refill_kitchen()
@@ -62,7 +62,6 @@ void Kitchen::loop()
             this->refill_kitchen();
         }
     }
-    this->~Kitchen();
 }
 
 void Kitchen::setup_cooking(std::shared_ptr<APizza> tmp_pizza) {
@@ -211,10 +210,10 @@ void Kitchen::recieveOrder(int cfd)
     if (str.empty() == false) {
         std::cout << "RECU" << std::endl;
         if (str == "nb_pizza")
-            dprintf(fd_socket, std::to_string(getStatus()).c_str());
+            dprintf(kitchen_fd, std::to_string(getStatus()).c_str());
         else if (str == "status") {
             tmp = tmp + std::to_string(getStatus()) + " dans la cuisine.";
-            dprintf(fd_socket, tmp.c_str());
+            dprintf(kitchen_fd, tmp.c_str());
         } else {
             std::cout << "PIZZA" << std::endl;
             check_pizza(str);

@@ -19,7 +19,7 @@ class Cook;
 class Kitchen {
     public:
         Kitchen() = default;
-        Kitchen(int multiplier, int nb_cook, int time, int fd);
+        Kitchen(int multiplier, int nb_cook, int time);
         ~Kitchen();
         void refill_kitchen();
         void loop();
@@ -39,7 +39,6 @@ class Kitchen {
         int refill;
         std::vector<std::shared_ptr<Cook>> cook;
         std::vector<std::shared_ptr<APizza>> pizza;
-        int fd_socket;
         int kitchen_fd;
     protected:
         int multiplier;
