@@ -53,6 +53,7 @@ void Kitchen::loop()
                     setup_cooking(pizza[i]);
                     pizza.pop_back();
                     timer = clock();
+                    std::cout << "STATUS ==> "<< getStatus() << std::endl;
                     break;
                 }
             }
@@ -98,7 +99,7 @@ int Kitchen::getStatus()
     int stock = -1;
 
     value -= pizza.size();
-    for (size_t i = 0; i < this->actual_cook; i++) {
+    for (int i = 0; i < this->actual_cook; i++) {
         stock = this->cook[i]->get_status();
         if (stock == 1) {
             value--;

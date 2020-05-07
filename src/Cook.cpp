@@ -39,6 +39,7 @@ void Cook::get_pizzou(std::shared_ptr<APizza> pizza) {
 
 Cook::Cook(int multiplier, int id) {
     this->id = id;
+    this->status = 1;
     // std::cout << "     thread ==> CREATED " << this->id<<std::endl;
     this->cook_mutiplier = multiplier;
     this->_thread = std::thread(&Cook::loop, this);
