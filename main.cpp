@@ -20,6 +20,7 @@
 #include "Margarita.hpp"
 #include "Fantasia.hpp"
 #include "Kitchen.hpp"
+#include "IPC.hpp"
 
 static const std::map<std::string, APizza::PizzaType> enum_pizza {
     {"regina", APizza::PizzaType::Regina},
@@ -182,44 +183,155 @@ std::vector<std::shared_ptr<APizza>> Core::create_command(std::vector<std::strin
     return (tab);
 }
 
+std::vector<std::shared_ptr<APizza>> Core::sent_pizza(int nb, int fd, std::vector<std::shared_ptr<APizza>> tab_pizza)
+{
+    std::string data;
+    int j = 0;
+
+    std::cout << "SIZE_1 ==> " << tab_pizza.size() << std::endl;
+    for (; j < nb && j < tab_pizza.size(); j++) {
+        data = APizza::pack(tab_pizza[j]) + ':';
+        dprintf(fd, data.c_str());
+        tab_pizza.erase(tab_pizza.begin() + j);
+        j--;
+    }
+    std::cout << "SIZE_2 ==> " << tab_pizza.size() << std::endl;
+    // for (int i = 0; i < j; i++)
+    //     tab_pizza.erase(tab_pizza.begin());
+
+    return (tab_pizza);
+}
+
+void Core::create_kitchen(std::vector<std::shared_ptr<APizza>> tab_pizza)
+{
+    int nb = 0;
+    pid_t pid = 0;
+    bool ok = false;
+    int fd_kitchen = 0;
+    struct sockaddr_in my_addr = IPC::init_my_addr(4242);
+    socklen_t lenght = sizeof(my_addr);
+
+    nb = (tab_pizza.size() / (nb_cook * 2));
+    nb += (tab_pizza.size()) % (nb_cook * 2) != 0 ? 1 : 0;
+    for (int i = 0; i < nb; i++) {
+        pid = fork();
+        if (pid == 0) {
+            std::cout << "CREATE KITCHEN" << std::endl;
+            Kitchen kitchen(multiplier, nb_cook, replace);
+            std::cout << "Kitchen Finish" << std::endl;
+            exit(0);
+        } else {
+            FD_ZERO(&ready);//ready = current;
+            FD_SET(fd_socket, &ready);
+            while (ok != true) {
+                select(FD_SETSIZE, &ready, NULL, NULL, NULL);
+                if (FD_ISSET(fd_socket, &ready)) {
+                    ok = true;
+                    fd_kitchen = accept(fd_socket, (struct sockaddr *) &my_addr, &lenght);
+                    FD_SET(fd_kitchen, &current);
+                    fd_tab.push_back(fd_kitchen);
+                }
+            }
+            tab_pizza = sent_pizza(nb_cook * 2, fd_kitchen, tab_pizza);
+        }
+    }
+}
+
+int Core::get_status(int i)
+{
+    char res[80];
+    fd_set tmp;
+    int fd = fd_tab[i];
+    bool ok = false;
+
+    //std::cout << "SIZE_TAB:" << fd_tab.size() << std::endl;
+    //std::cout << "I:" << i << std::endl;
+    FD_ZERO(&tmp);
+    FD_SET(fd, &tmp);
+    select(FD_SETSIZE, &tmp, NULL, NULL, NULL);
+    if (FD_ISSET(fd, &tmp)) {
+        read(fd, res, 80);
+        //std::cout << "Message:" << res << std::endl;
+        //if (res == "destroy") {
+            fd_tab.erase(fd_tab.begin() + i);
+            FD_ZERO(&tmp);
+            return (-1);
+        //}
+    } else {
+        //std::cout << "NB_PIZZA" << std::endl;
+        //write(fd_tab[i], "nb_pizza", 8);
+        while (ok != true) {
+            select(FD_SETSIZE, &tmp, NULL, NULL, NULL);
+            if (FD_ISSET(fd_tab[i], &tmp)) {
+                read(fd, res, 80);
+                ok = true;
+            }
+        }
+        return (std::stoi(res));
+    }
+    return (-1);
+}
+
 void Core::parse_pizza(std::string str)
 {
     std::vector<std::shared_ptr<APizza>> tab_pizza;
     std::vector<std::string> tab_command;
-    int nb = 0;
     int tmp = 0;
 
     tab_command = divide_command(str);
     tab_pizza = create_command(tab_command);
     for (size_t i = 0; i < tab_pizza.size(); i++) {
-        std::cout << "Pizza :" << tab_pizza[i]->getType();
-        std::cout << "  Size :" << tab_pizza[i]->getSize() << std::endl;
-    }/*
-    if (fd_kitchen.empty() == true) {
-        //create new kitchen fct :
-        nb = (tab_pizza.size() / (nb_cook * 2));
-        nb += (tab_pizza.size() / (nb_cook * 2)) % 6 != 0 ? 1 : 0;
-        for (int i = 0; i < nb; i++) {
-            //fd = mkfifo();
-            //fd_kitchen.push_back(fd);
-            //fork
-            //Kitchen kitchen(multiplier, nb_cook, replace, fd_fifo);
-        }
+        //std::cout << "Pizza :" << tab_pizza[i]->getType();
+        //std::cout << "  Size :" << tab_pizza[i]->getSize() << std::endl;
+    }
+    if (fd_tab.size() == 0) {
+        create_kitchen(tab_pizza);
     } else {
-        for (size_t i = 0; i < fd_kitchen.size(); i++)
-            //if ((tmp = get_status(fd_kitchen[i])) < (nb_cook * 2))
-            //   sent_pizza((nb_cook * 2) - tmp, fd_kitchen[i]);
+        for (size_t i = 0; i < fd_tab.size(); i++) {
+            if ((tmp = get_status(i)) < (nb_cook * 2))
+                if (tmp == -1)
+                    i -= 1;
+                else
+                    tab_pizza = sent_pizza(tmp, fd_tab[i], tab_pizza);
+        }
         if (tab_pizza.empty() != true)
-            //create new kitchen fct
-    }*/
-    Kitchen kitchen(multiplier, nb_cook, replace);
-    std::cout << "Kitchen Finish" << std::endl;
+            create_kitchen(tab_pizza);
+    }
 }
 
 void Core::status()
 {
-    if (fd_kitchen.empty() == true)
-        std::cout << "No cook running" << std::endl;
+}
+
+struct sockaddr_in IPC::init_my_addr(int port)
+{
+    struct sockaddr_in my_addr;
+
+    my_addr.sin_family = AF_INET;
+    my_addr.sin_addr.s_addr = INADDR_ANY;
+    my_addr.sin_port = htons(port);
+    return (my_addr);
+}
+
+int IPC::init_server(int port)
+{
+    int my_socket = 0;
+    int option = 1;
+    struct sockaddr_in my_addr = init_my_addr(port);
+    socklen_t lenght_socket = sizeof(my_addr);
+
+    my_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (my_socket == -1)
+        return (0);
+    lenght_socket = sizeof(my_addr);
+    if (setsockopt(my_socket, SOL_SOCKET, (SO_REUSEPORT | SO_REUSEADDR),
+        (char *)&option, sizeof(option)) < 0)
+        return (0);
+    if (bind(my_socket, (struct sockaddr *) &my_addr, lenght_socket) == -1)
+        return (0);
+    if (listen(my_socket, 100) == -1)
+        perror("Listen");
+    return (my_socket);
 }
 
 void Core::restaurant()
@@ -227,16 +339,17 @@ void Core::restaurant()
     std::string str;
     static clock_t timer = 0;
 
+    fd_socket = IPC::init_server(4242);
+    FD_ZERO(&current);
+    FD_SET(fd_socket, &current);
     while (1) {
         getline(std::cin, str);
         if (std::cin.eof() == 1)
             return;
         if (str[str.size() - 1] == '\n')
             str = str.substr(0, str.size() - 1);
-        if ((clock() - timer) > (replace * 1000)) {
-            timer = clock();
-            //refill_kitchen(); A FAIRE COTE KITCHEN
-        }
+        /*if ((clock() - timer) > (replace * 1000))
+            timer = clock();*/
         if (str.compare("status") == 0)
             status();
         else

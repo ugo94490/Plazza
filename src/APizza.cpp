@@ -65,5 +65,18 @@ std::string APizza::pack(std::shared_ptr<APizza> pizza)
 
 std::shared_ptr<APizza> APizza::unpack(std::string str)
 {
-    return (nullptr);
+    std::string tmp = str.substr(6);
+    std::string name;
+    std::string size;
+    std::vector<std::string> arg;
+    std::shared_ptr<APizza> ptr;
+    int space = 0;
+
+    space = tmp.find(' ');
+    name = tmp.substr(0, space);
+    size = tmp.substr(space + 1);
+    arg.push_back(name);
+    arg.push_back(size);
+    ptr = Core::fill_pizza(arg);
+    return (ptr);
 }
