@@ -30,6 +30,7 @@ class IPC {
         static int init_server(int port);
         static struct sockaddr_in init_my_addr(int port);
         static int setUpListener(int port);
+        int get_status(int i, std::vector<int> fd_tab);
     private:
 
 };

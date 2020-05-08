@@ -236,7 +236,7 @@ void Core::create_kitchen(std::vector<std::shared_ptr<APizza>> tab_pizza)
     }
 }
 
-int Core::get_status(int i)
+int IPC::get_status(int i, std::vector<int> fd_tab)
 {
     char res[80];
     fd_set tmp;
@@ -273,10 +273,10 @@ void Core::parse_pizza(std::string str)
     tab_command = divide_command(str);
     tab_pizza = create_command(tab_command);
     //if (fd_tab.size() == 0) {
-        create_kitchen(tab_pizza);
+    create_kitchen(tab_pizza);
     /*} else {
         for (size_t i = 0; i < fd_tab.size(); i++) {
-            if ((tmp = get_status(i)) < (nb_cook * 2))
+            if ((tmp = IPC::get_status(i)) < (nb_cook * 2))
                 if (tmp == -1)
                     i -= 1;
                 else
