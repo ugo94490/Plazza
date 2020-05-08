@@ -107,15 +107,20 @@ int Kitchen::getStatus()
 
 bool Kitchen::check_ingredients(std::shared_ptr<APizza> pizza)
 {
-    auto ingredients = pizza->getIngredients();
+    std::vector<APizza::PizzaIngredient> ingre = pizza->getIngredients();
+    int count = 0;
 
-    for (auto i : ingredients)
-        if (ingredient[i] < 1) {
-            return false;
-        }
-    for (auto i : ingredients)
-        ingredient[i]--;
-    return true;
+    for (auto i = ingredient.begin(); i != ingredient.end(); i++)
+        for (int j = 0; j < ingre.size(); j++)
+            if (i->first == ingre[j] && i->second > 0)
+                count++;
+    if (count != ingre.size())
+        return (false);
+    for (auto i = ingredient.begin(); i != ingredient.end(); i++)
+        for (int j = 0; j < ingre.size(); j++)
+            if (i->first == ingre[j] && i->second > 0)
+                i->second--;
+    return (true);
 }
 
 void Kitchen::clean_cook() {
