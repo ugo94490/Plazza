@@ -23,10 +23,10 @@ class Cook {
         std::mutex cooker_mutex;
         std::mutex tmp_pizza_mutex;
         std::shared_ptr<APizza> tmp_pizza = nullptr;
-        int cook_mutiplier;
+        float cook_mutiplier;
 
     public:
-        Cook(int multiplier, int id);
+        Cook(float multiplier, int id);
         ~Cook();
         int get_status() const;
         void unlock_cooker();

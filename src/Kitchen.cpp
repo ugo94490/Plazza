@@ -10,7 +10,7 @@
 #include "Margarita.hpp"
 #include "Cook.hpp"
 
-Kitchen::Kitchen(int multi, int nb, int temps, int id)
+Kitchen::Kitchen(float multi, int nb, int temps, int id)
 {
     multiplier = multi;
     nb_cook = nb;

@@ -32,7 +32,7 @@ void Cook::get_pizzou(std::shared_ptr<APizza> pizza) {
 }
 
 
-Cook::Cook(int multiplier, int id) {
+Cook::Cook(float multiplier, int id) {
     this->id = id;
     this->status = 1;
     this->cook_mutiplier = multiplier;
