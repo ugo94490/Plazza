@@ -25,7 +25,8 @@ void Cook::loop() {
     }
 }
 
-void Cook::get_pizzou(std::shared_ptr<APizza> pizza) {
+void Cook::get_pizzou(std::shared_ptr<APizza> pizza)
+{
     tmp_pizza_mutex.lock();
     this->tmp_pizza = pizza;
     tmp_pizza_mutex.unlock();

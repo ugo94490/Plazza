@@ -24,6 +24,7 @@
 #include <limits.h>
 #include <time.h>
 #include <ctype.h>
+#include <vector>
 
 class IPC {
     public:
