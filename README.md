@@ -7,7 +7,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/ugo94490/Plazza/">
-    <img src="plazza.jpeg" alt="Logo" width="626" height="626">
+    <img src="plazza.jpg" alt="Logo" width="626" height="626">
   </a>
 
   <h3 align="center">Plazza</h3>
